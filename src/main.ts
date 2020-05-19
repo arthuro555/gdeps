@@ -1,3 +1,5 @@
+import { getPriority } from "os";
+
 const join = require("path").join;
 const program = require("commander");
 const inquirer = require("inquirer");
@@ -27,6 +29,13 @@ function writeFile(file: File, content: string): Promise<any> {
 }
 
 /**
+ * A class descrining gdeps.json properties
+ */
+class Properties {
+    fileDependencies: Array<SourceFile> = [];
+}
+
+/**
  * A class describing a GDevelop Source file
  */
 class SourceFile {
@@ -40,6 +49,24 @@ type ProjectFile = {
         useExternalSourceFiles: boolean
     };
     externalSourceFiles: SourceFile[];
+}
+
+function getProperties(): Properties {
+    let properties: Properties;
+    if (fs.existsSync("gdeps.json")) {
+        try{
+            properties = JSON.parse(fs.readFileSync("gdeps.json"));
+            // Check for validity
+            if(!Array.isArray(properties.fileDependencies)) {
+                properties = new Properties();
+            }
+        } catch {
+            properties = new Properties();
+        }
+    } else {
+        properties = new Properties();
+    }
+    return properties;
 }
 
 export function addDependency(projectFile: string, file: File) {
@@ -98,6 +125,25 @@ program
     .description("A dependency manager for GDevelop built on top of bower.");
 
 program
+    .command('init')
+    .description('Initializes a gdeps project')
+    .action(() => {
+        bower.commands
+            .init({interactive: true})
+            .on('error', console.error)
+            .on('log', (message: string) => console.log("Bower: " + message.toString()))
+            .on('prompt', function (prompts, callback) {
+                inquirer.prompt(prompts).then(callback);
+            })
+            .on('end', function () {
+                if (!fs.existsSync("gdeps.json")) {
+                    fs.writeFileSync("gdeps.json", '{\n\t"fileDependencies": {\n\t\t\n\t}\n"');
+                    console.log("Wrote bower.json and gdeps.json config files.")
+                }
+            });
+})
+
+program
     .command('install <package>')
     .description('Install a package')
     .action((packageName: string) => {
@@ -126,6 +172,21 @@ program
         .then((newProject: string) => writeFile(projectFileLocation, newProject))
         .then(() => {console.log("Done!")})
         .catch(console.error);
+    });
+
+program
+    .command('register <file>')
+    .description('Add a local JS file to the project')
+    .action((fileName: string) => {
+        const properties: Properties = getProperties();
+        if (!fs.existsSync(fileName)) {
+            console.error("The File doesn't exist!");
+            return;
+        }
+        const newSourceFile: SourceFile = new SourceFile();
+        newSourceFile.filename = fileName;
+        properties.fileDependencies.push(newSourceFile);
+        fs.writeFileSync("gdeps.json", JSON.stringify(properties));
     });
 
 program.parse(process.argv);
