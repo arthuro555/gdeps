@@ -1,0 +1,36 @@
+{
+  "name": "gdeps",
+  "version": "1.0.0",
+  "description": "A dependency Manager for GDevelop",
+  "main": "main.js",
+  "bin": {
+    "gdeps": "./bin/main"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arthuro555/gdeps.git"
+  },
+  "keywords": [
+    "dependency",
+    "bower",
+    "GDevelop"
+  ],
+  "author": "Arthur Pacaud (arthuro555)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/arthuro555/gdeps/issues"
+  },
+  "homepage": "https://github.com/arthuro555/gdeps#readme",
+  "dependencies": {
+    "bower": "^1.8.8",
+    "commander": "^5.1.0",
+    "inquirer": "^7.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^14.0.1",
+    "typescript": "^3.9.2"
+  }
+}
