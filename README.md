@@ -6,7 +6,7 @@ This lets you install bower packages for a GDevelop project.
 ## Usage:
 
 To install a package, cd to your directory with your project json.
-They just type: 
+Then just type: 
 ```bash
 gdeps install <packagename>
 ```
@@ -15,4 +15,4 @@ Example:
 gdeps install pako
 ```
 
-You can the use those normally through JS events in GDevelop.
+You can the use the package normally through JS events in GDevelop.
