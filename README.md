@@ -1,3 +1,4 @@
+*This was just a little experiment, and is now unmaintained.*
 # gdeps
 A bower wrapper for gdevelop games.
 
